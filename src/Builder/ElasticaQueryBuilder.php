@@ -403,9 +403,15 @@ class ElasticaQueryBuilder extends AbstractQueryBuilder
 
             $query = $this->qb->query()->match();
             $query->setField($fieldName, $data);
+            $prefixQuery = $this->qb->query()->prefix();
+            $prefixQuery->setParam('title.raw', $node->getValue());
         }
 
-        $this->addToBoolQuery($method, $fieldName, $query);
+        if (isset($prefixQuery)) {
+            $this->addToBoolQuery($method, 'title.raw', $prefixQuery);
+        } else {
+            $this->addToBoolQuery($method, $fieldName, $query);
+        }
     }
 
     /**
